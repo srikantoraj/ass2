@@ -68,12 +68,103 @@
           </span>
         </button> 
 
+        <!-- Button trigger modal -->
+<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Login
+</button>
+
 
 
 
        
        
     </nav>
+
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"><h1> Login page </h1>  </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="#">
+          
+          <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">User ID / Email</label>
+              <input type="text" name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+              <div id="emailHelp" class="form-text">We'll never share your username with anyone else.</div>
+            </div>
+          
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" id="exampleInputPassword1" required>
+            </div>
+          
+            <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+          
+            Don't have any Account? <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal2">Register</button> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+      
+    </form>
+    </div>
+  </div>
+</div>
+
+
+ <!-- Modal -->
+ <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"><h1> Registration page </h1>  </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div >
+          
+          <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label"> Name</label>
+              <input type="text" id="registrationName" name="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+              
+            </div>
+          <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label"> Email</label>
+              <input type="text" id="registrationEmail" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+              
+            </div>
+          
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" id="registrationPassword" name="password" class="form-control" id="exampleInputPassword1" required>
+            </div>
+          
+            <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+          
+            <!-- Don't have any Account? <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal2">Register</button>  -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onclick="registration()" class="btn btn-primary">Submit</button>
+      </div>
+      
+    </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
     <div class="offcanvas offcanvas-end offcanvas-size-xl offcanvas-size-xxl" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">Cart</h5>
@@ -175,9 +266,52 @@ seller1Data = `<section class="container my-5"  >
 document.getElementById('seller1Cointainer').innerHTML=seller1Data;
 document.getElementById('seller2Cointainer').innerHTML=seller1Data2;
 
-
-
 }
+
+function registration(){
+
+  var name = document.getElementById('registrationName').value;
+  var email = document.getElementById('registrationEmail').value;
+  var password = document.getElementById('registrationPassword').value;
+
+  let formData = new FormData();
+formData.append('name', name);
+formData.append('email', email);
+formData.append('password', password);
+
+fetch("https://131.217.172.194/assignment2/registration.php",
+    {
+        body: formData,
+        method: "post"
+    })
+    .then(res=>res.json())
+    .then(json=>console.log(json));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function seller1(){
   document.getElementById('seller1Cointainer').innerHTML="";
