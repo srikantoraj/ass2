@@ -1,42 +1,27 @@
-<?php
-header('Access-Control-Allow-Origin: *'); 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-   
-
-   $username = $_POST['name'];
-   $password = $_POST['password'];
-    $email = $_POST['email'];
-       
-
-          $mysqli = new mysqli('localhost', 'root', "@Sayef01674928470", 'assignment2');
-        
+<?php  
+$mysqli = new mysqli('localhost', 'root', "@Sayef01674928470", 'assignment2');
         
         if (mysqli_connect_errno()) {
                 printf("Connect failed: %s\n", mysqli_connect_error());
                 exit();
             }
-        
-    $sql = "INSERT INTO `users`(`id`, `name`, `password`, `email`,`balance`) VALUES (null,'$username','$password','$email',null)";
-    $result=$mysqli->query($sql);
-
-    if($result){
-        
-	header("Content-Type: application/json");
-
-
-
-$sql2= "select * from users";
-$result2=$mysqli->query($sql2);
-
-while($row = $result2->fetch_array(MYSQLI_ASSOC))
+            $sql= "select * from products";
+            $result=$mysqli->query($sql);
+ 	        $arr = array ();
+            while($row = $result->fetch_array(MYSQLI_ASSOC))
             {
-                    if($row["name"]==$username)
-                    $arr = array("id"=>$row['id'],"name"=>$row['name'],"balance"=>$row['balance'];
+                $id =   $row['id'];
+                $name = $row['product_name'];
+                $price =$row['price'];
+                $details=$row['details'];
+                $image =$row['image'];
+		        $belongsTo=$row['belongs_to'];
+                $temp =  array( "id"=>$id,"name"=>$name,"price"=>$price,"details"=>$details,"image"=>$image,"belongs_to"=>$belongsTo);
+                array_push($arr,$temp);
             }
+ 
+// Function to convert array into JSON
+header('Access-Control-Allow-Origin: *'); 
+header("Content-Type: application/json");
 echo json_encode($arr);
-
-
-    }
-}
-    
-?>
+   

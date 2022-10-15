@@ -69,8 +69,15 @@
         </button> 
 
         <!-- Button trigger modal -->
-<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" id="login" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
   Login
+</button>
+<button type="button" style="display: none;" id="username" class="btn btn-outline-light me-4 text-white" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight2" aria-controls="offcanvasRight">
+  
+</button>
+
+<button type="button" class="btn btn-danger" style="display: none;" onclick="logout()" id="logout" >
+  Logout
 </button>
 
 
@@ -92,14 +99,14 @@
         <form method="post" action="#">
           
           <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">User ID / Email</label>
-              <input type="text" name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+              <label for="exampleInputEmail1" class="form-label">Username</label>
+              <input type="text" id="loginUsername" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
               <div id="emailHelp" class="form-text">We'll never share your username with anyone else.</div>
             </div>
           
             <div class="mb-3">
               <label for="exampleInputPassword1" class="form-label">Password</label>
-              <input type="password" name="password" class="form-control" id="exampleInputPassword1" required>
+              <input type="password" id="loginPassword" class="form-control" id="exampleInputPassword1" required>
             </div>
           
             <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
@@ -107,8 +114,8 @@
             Don't have any Account? <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal2">Register</button> 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" id="loginbutton" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onclick="loginUser()" class="btn btn-primary">Submit</button>
       </div>
       
     </form>
@@ -143,13 +150,17 @@
               <label for="exampleInputPassword1" class="form-label">Password</label>
               <input type="password" id="registrationPassword" name="password" class="form-control" id="exampleInputPassword1" required>
             </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Address</label>
+              <textarea type="text" id="registrationAddress" name="registrationAddress" class="form-control" id="exampleInputPassword1" required></textarea>
+            </div>
           
             <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
           
             <!-- Don't have any Account? <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal2">Register</button>  -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="registrationClose">Close</button>
         <button type="button" onclick="registration()" class="btn btn-primary">Submit</button>
       </div>
       
@@ -168,15 +179,35 @@
     <div class="offcanvas offcanvas-end offcanvas-size-xl offcanvas-size-xxl" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">Cart</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="btn-close" id="cartClose" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body" >
         <div id="offcanvas-body">
 
         </div>
         <div>Total price: $<span class="total-cart" id="total-cart"></span></div>
-        <div>Total price: $<span class="total-cart" id="total-cart"></span></div>
-        <div>Total price: $<span class="total-cart" id="total-cart"></span></div>
+        <a role="button" class="btn btn-primary my-5" onclick="checkOut()">Place Order</a>       
+        <a role="button" class="btn btn-danger my-5" onclick="cancelOrder()">Cancel Order</a>       
+                   
+      
+      </div>
+    </div>
+
+     <!-- adding money  -->
+    <div class="offcanvas offcanvas-end offcanvas-size-xl offcanvas-size-xxl" tabindex="-1" id="offcanvasRight2" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel2"></h5>
+        <button type="button" class="btn-close" id="cartClose" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body" >
+        <div id="offcanvas-body2">
+
+        </div>
+      <!-- <div>Total price: $<span class="total-cart" id="total-cart"></span></div> -->
+        <!-- <a role="button" class="btn btn-primary my-5" onclick="addMoney()">Add money</a>        -->
+        <!-- <a role="button" class="btn btn-danger my-5" onclick="cancelOrder()">Cancel Order</a>        --> -->
+                   
+      
       </div>
     </div>
   <!-- nav end -->
@@ -194,418 +225,7 @@
 <!-- seller2 end -->
 
 
-<script>
-var data ="";
-var data2 ="";
-
-var itemLists;
-fetch("https://131.217.172.194/assignment2/api.php")
-    .then(response => response.json())
-    .then(datas =>uiData(datas))
-   
-   
-   
-function uiData(datas){
-  var seller1Data="";
-  var seller1Data2="";
-  itemLists = [...datas];
-   for (const list of itemLists) { 
-    
-    if(list['belongs_to']=='1001')
-    data += `<div class="col">
-                <div class="card shadow-lg border-0h-100">
-                    <img src="${list['image']}" class="card-img-top px-5" alt="..." height="250">
-                    <div class="card-body">
-                        <h5 class="card-title">${list['name']}</h5>
-                        <p class="card-text">${list['details']}</p>
-                    </div>
-                    <div class="card-footer text-center bg-white border-top-0">
-                    <a role="button" class="btn btn-outline-secondary" onclick="addToCart(${list['id']})">Add to Cart</a>       
-                        
-                    </div>
-                </div>
-            </div> `;
-
-    if(list['belongs_to']=='1002')
-    data2 += `<div class="col">
-                <div class="card shadow-lg border-0h-100">
-                    <img src="${list['image']}" class="card-img-top px-5" alt="..." height="250">
-                    <div class="card-body">
-                        <h5 class="card-title">${list['name']}</h5>
-                        <p class="card-text">${list['details']}</p>
-                    </div>
-                    <div class="card-footer text-center bg-white border-top-0">
-                    <a role="button" class="btn btn-outline-secondary" onclick="addToCart(${list['id']})">Add to Cart</a>       
-                        
-                    </div>
-                </div>
-            </div> `;
-    
-
-
-}
-
-seller1Data = `<section class="container my-5"  >
-      <h2 style="text-align: center;">Seller 1</h2>  
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="seller1">
-            
-              ${data}
-              
-              
-          </div>
-      </section>`;
- seller1Data2 = `<section class="container my-5"  >
-      <h2 style="text-align: center;">Seller 2</h2>  
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="seller2">
-            
-              ${data2}
-              
-              
-          </div>
-      </section>`;
-document.getElementById('seller1Cointainer').innerHTML=seller1Data;
-document.getElementById('seller2Cointainer').innerHTML=seller1Data2;
-
-}
-
-function registration(){
-
-  var name = document.getElementById('registrationName').value;
-  var email = document.getElementById('registrationEmail').value;
-  var password = document.getElementById('registrationPassword').value;
-
-  let formData = new FormData();
-formData.append('name', name);
-formData.append('email', email);
-formData.append('password', password);
-
-fetch("https://131.217.172.194/assignment2/registration.php",
-    {
-        body: formData,
-        method: "post"
-    })
-    .then(res=>res.json())
-    .then(json=>console.log(json));
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function seller1(){
-  document.getElementById('seller1Cointainer').innerHTML="";
-document.getElementById('seller2Cointainer').innerHTML="";
-  fetch("https://131.217.172.194/assignment2/seller1/itemlist.php")
-    .then(response => response.json())
-    .then(json =>seller1UI(json));
-}
-function seller2(){
-  document.getElementById('seller1Cointainer').innerHTML="";
-document.getElementById('seller2Cointainer').innerHTML="";
-  fetch("https://131.217.172.194/assignment2/seller2/itemlist.php")
-    .then(response => response.json())
-    .then(json =>seller2UI(json));
-}
-
-function seller1UI(itemlist){
-  var seller1Data="";
-  var data ="";
-  
-  var itemLists1 = [...itemlist];
-   for (const list of itemLists1) { 
-    let myArray = list['details'].split(",");
-   
-    let listItem = myArray.map(item =>`<li>${item}<li>`)
-    
-    if(list['belongs_to']=='1001')
-    data += `<div class="col">
-                <div class="card shadow-lg border-0h-100">
-                    <img src="${list['image']}" class="card-img-top px-5" alt="..." height="250">
-                    <div class="card-body">
-                        <h5 class="card-title">${list['name']}</h5>
-                        <ul class="card-text">${listItem}</ul>
-                    </div>
-                    <div class="card-footer text-center bg-white border-top-0">
-                    <a role="button" class="btn btn-outline-secondary" onclick="addToCart(${list['id']})">Add to Cart</a>       
-                        
-                    </div>
-                </div>
-            </div> `;
-
-
-            seller1Data = `<section class="container my-5"  >
-      <h2 style="text-align: center;">Seller 1</h2>  
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="seller1">
-            
-              ${data}
-              
-              
-          </div>
-      </section>`;
-
-
-
-}
-document.getElementById('seller1Cointainer').innerHTML=seller1Data;
-
-}
-function seller2UI(itemlist){
-  var seller2Data="";
-  var data ="";
-  
-  var itemLists2 = [...itemlist];
-   for (const list of itemLists2) { 
-    
-    if(list['belongs_to']=='1002')
-    data += `<div class="col">
-                <div class="card shadow-lg border-0h-100">
-                    <img src="${list['image']}" class="card-img-top px-5" alt="..." height="250">
-                    <div class="card-body">
-                        <h5 class="card-title">${list['name']}</h5>
-                        <p class="card-text">${list['details']}</p>
-                    </div>
-                    <div class="card-footer text-center bg-white border-top-0">
-                    <a role="button" class="btn btn-outline-secondary" onclick="addToCart(${list['id']})">Add to Cart</a>       
-                        
-                    </div>
-                </div>
-            </div> `;
-
-
-            seller2Data = `<section class="container my-5"  >
-      <h2 style="text-align: center;">Seller 2</h2>  
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="seller1">
-            
-              ${data}
-              
-              
-          </div>
-      </section>`;
-
-
-
-}
-document.getElementById('seller1Cointainer').innerHTML=seller2Data;
-
-}
-
-
-function search(){
-
-  document.getElementById('seller1Cointainer').innerHTML="";
-  document.getElementById('seller2Cointainer').innerHTML="";
-  var searchData = document.getElementById('search').value;
-  var data="";
-  var data2="";
-  var searchName = searchData.toLowerCase();
-  for (const list of itemLists) { 
-
-    var itemName = list['name'].toLowerCase();
-    if(list['belongs_to']=='1001' && itemName.includes(searchName))
-    data += `<div class="col">
-                <div class="card shadow-lg border-0h-100">
-                    <img src="${list['image']}" class="card-img-top px-5" alt="..." height="250">
-                    <div class="card-body">
-                        <h5 class="card-title">${list['name']}</h5>
-                        <p class="card-text">${list['details']}</p>
-                    </div>
-                    <div class="card-footer text-center bg-white border-top-0">
-                    <a role="button" class="btn btn-outline-secondary" onclick="addToCart(${list['id']})">Add to Cart</a>       
-                        
-                    </div>
-                </div>
-            </div> `;
-
-    if(list['belongs_to']=='1002' && itemName.includes(searchName))
-    data2 += `<div class="col">
-                <div class="card shadow-lg border-0h-100">
-                    <img src="${list['image']}" class="card-img-top px-5" alt="..." height="250">
-                    <div class="card-body">
-                        <h5 class="card-title">${list['name']}</h5>
-                        <p class="card-text">${list['details']}</p>
-                    </div>
-                    <div class="card-footer text-center bg-white border-top-0">
-                    <a role="button" class="btn btn-outline-secondary" onclick="addToCart(${list['id']})">Add to Cart</a>       
-                        
-                    </div>
-                </div>
-            </div> `;
-    
-
-  
-}
-var seller1Data = `<section class="container my-5"  >
-      <h2 style="text-align: center;">Seller 1</h2>  
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="seller1">
-            
-              ${data}
-              
-              
-          </div>
-      </section>`;
- var seller1Data2 = `<section class="container my-5"  >
-      <h2 style="text-align: center;">Seller 2</h2>  
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="seller2">
-            
-              ${data2}
-              
-              
-          </div>
-      </section>`;
-if(data)
-document.getElementById('seller1Cointainer').innerHTML=seller1Data;
-if(data2)
-document.getElementById('seller2Cointainer').innerHTML=seller1Data2;
-}
-var cartObj = {};
-function addToCart(id){
- var  cart= document.getElementById("cart").innerText;
- document.getElementById("cart").innerText = parseInt(cart) +1;
- if(cartObj[id])
- cartObj[id]=cartObj[id]+1;
- else
- cartObj[id]=1;
- console.log(cartObj);
- 
-
-
-}
-
-var cartItems=[];
-function cartDesign()
-{
-  document.getElementById("offcanvas-body").innerText = JSON.stringify(cartObj);
-
-  for(item in cartObj){
-    console.log(item);
-    console.log(cartObj[item]);
-    console.log(itemLists);
-    var cartItem = itemLists.find(listitem =>{
-      if(listitem['id']==item)
-      return listitem;
-    })
-    cartItems = [...cartItems,cartItem];
-    
-  }
-  displayCart(cartItems);
-}
-function displayCart(cartItems) {
-  var cartArray = [...cartItems];
-  var quantity;
-  var total = 0;
-  // console.log("display");
-  // console.log(cartArray);
-  // console.log(cartObj);
-  var output = "";
-  for(var i in cartArray) {
-
-   for( item in cartObj){
-    if(cartArray[i].id ==item){
-      quantity = cartObj[item];
-    }
-   }
-    output += "<tr>"
-      + "<td>" + cartArray[i].name + "</td>" 
-      + "<td>($" + cartArray[i].price + ")</td>"
-      + "<td><div class='input-group'><button  onclick='reduceItem("+cartArray[i].id+")' class='minus-item input-group-addon btn btn-primary' data-name=" + cartArray[i].name + ">-</button>"
-      + "<input type='number' class='item-count form-control'min='1' max='20' data-name='" + cartArray[i].name + "' value='"+ quantity +"'>"
-      + "<button onclick='addItem("+cartArray[i].id+")' class='plus-item btn btn-primary input-group-addon' data-name=" + cartArray[i].name + ">+</button></div></td>"
-      + "<td><button onclick='deleteItem("+cartArray[i].id+")' class='delete-item btn btn-danger' data-name=" + cartArray[i].name + ">X</button></td>"
-      
-      + "<td>=$" + parseInt(cartArray[i].price )*parseInt(quantity) + "</td>" 
-      +  "</tr>";
-      total +=parseInt(cartArray[i].price )*parseInt(quantity);
-  }
-
-  document.getElementById("offcanvas-body").innerHTML = `<table class="show-cart table" id="cartTable">
-          ${output}
-        </table>`;
-        document.getElementById("total-cart").innerText = total;
-}
-
-function deleteItem(id){
-  var num = id;
-  var newObj ={};
-  for(var item in cartObj){
-     if(num!=item)
-     {
-      newObj[item]=cartObj[item];
-     }
-       
-  }
-  cartObj ={...newObj}
- var newCartItems = cartItems.map(item=>{
-    var id = item.id;
-    for(var cart in cartObj){
-      if(id == cart)
-      return item;
-    }
-  
-  })
-  
-  cartItems =[];
-  for ( i of newCartItems){
-    if(i){
-      cartItems=[...cartItems,i];
-    }
-  }
-   displayCart(cartItems);
-}
-
-function addItem(id){
-  for(item in cartObj){
-    if(item==id)
-    if(cartObj[item]>=10){
-      cartObj[item] =10;
-      alert("Sorry, only 10 piece left !!!");
-    }
-    else
-    cartObj[item] +=1;
-
-  }
-   displayCart(cartItems);
-
-
-}
-function reduceItem(id){
-  for(item in cartObj){
-    if(item==id)
-    if(cartObj[item]==1){
-      cartObj[item] =1;
-      alert("You can't order less than 1 item !!!");
-    }
-    
-    else
-    cartObj[item] -=1;
-
-  }
-   displayCart(cartItems);
-
-
-}
-
-</script>
+<script src="script.js"></script>
  
 
 
